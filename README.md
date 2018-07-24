@@ -7,7 +7,7 @@
 ### Project: Selling Sport Shoes
 
 Editor: VSCode
-    Extensions: C#, VSCode Solution Explorer, Docker Explorer
+    Extensions: C#, VSCode Solution Explorer, Docker Explorer, Dotnet core commands
     SQL Manager: SQLPro for MSSQL
 
 # Notes
@@ -99,7 +99,7 @@ Run: docker exec -it catalogdb /opt/mssql-tools/bin/sqlcmd -s localhost -U sa
     - > GO
 
 Create a Trial Database
-```bash
+```
 1> USE TrialDb
 2> CREATE TABLE Colleagues(Id INT, name NVARCHAR(50))
 3> INSERT INTO Colleagues VALUES(1,'Ben Hayat')
@@ -107,8 +107,7 @@ Create a Trial Database
 5> GO
 ```
 
-```bash
-Check
+```
 1> SELECT * FROM Colleagues
 2> GO
 ```
@@ -117,7 +116,7 @@ Check in MSSQL Management
 - Refresh or re-connect
 - Open the Colleague table to see the result
 
-## 3.13 Migration
+## 3.13 DbContext Migration
 
 Add a new extension to VSCode called dotnet-core-command for package managing.
 
@@ -132,6 +131,24 @@ Go into ProductCatalogApi folder and run:
 
 In my terminal, a message saying the 'Price' will be truncked if the value is not within default decimal place range.
 
-Inside [Initial Migration file](../src/Services/ProductCatalogApi/Data/Migrations/20180724194837_InitialMigration.cs) there are two methods: Up() and Down(). The up method describes the change made to the databases while the down desribes the rollbacks happend during this migration. Inside the up function three different hilo sequences are created based on our specification inside the CatalogContext.
+Inside [Initial Migration file](./src/Services/ProductCatalogApi/Data/Migrations/20180724194837_InitialMigration.cs) there are two methods: Up() and Down(). The up method describes the change made to the databases while the down desribes the rollbacks happend during this migration. Inside the up function three different hilo sequences are created based on our specification inside the CatalogContext.
+
+Now we want to update the database rules to the MSSQL/Docker server.
+First check whether your docker is running. Run `docker ps` to see that. If it has no values that mean you need to run through `docker start catalogdb` or right-click start on catalogdb located in VSCode Docker Container extension.
+
+Now it's time for migration.
+Go inside ProductCatalogApi directory inside your command line and run the following command:
+`dotnet ef database update InitialMigration -c CatalogContext` 
+instead of the one given by the lecturer. His command doesn't work on Mac currently.
+- Here we are not mentioning any migration name so all dependent migrations will applyed.
+- If you specify a migration name all up to and including the migration name will be applyed.
+
+If you just run this command the command line might throw you an exception saying that "Keyword not supported: "userid"." This has to do the way you wrote your connection string inside [appsettings.json](./src/Services/ProductCatalogApi/appsettings.json). Similar problems might occur with the other keywords if they are spelled wrong or has the wrong format.
+
+If everything run smoothly you should see a "Done" message in your command prompt. Now you can go to your SQL databse visualizer software, mine is SQL Pro for MSSQL, and see the changes. Inside you would be able to see 3 tables: Catalog, CatalogBrand, and CatalogType with all the column names and properties. My SQL database visualizer doesn't show the sequences, but yours might do it if you are using Windows.
+
+Conclusion: 
+We have applied the CatalogContext mapping onto a database using EntityFrameworkCore migration operation.
+
 
 
