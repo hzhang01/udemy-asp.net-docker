@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 # udemy-asp.net-docker
-Personal attempts at an Udemy course on ASP.NET CORE 2.0 E-commerse site using Docker
-=======
+
 Udemy Dockerized Microserivces App ASP .NET Core 2.0
 
 Author: Han Zhang
@@ -114,4 +112,3 @@ Check
 Check in MSSQL Management 
 - Refresh or re-connect
 - Open the Colleague table to see the result
->>>>>>> aa2431f... Added notes till 3.12
