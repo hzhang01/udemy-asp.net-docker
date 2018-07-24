@@ -1,10 +1,10 @@
 # udemy-asp.net-docker
 
-Udemy Dockerized Microserivces App ASP .NET Core 2.0
+## Udemy Dockerized Microserivces App ASP .NET Core 2.0
 
-Author: Han Zhang
+### Author: Han Zhang
 
-Project: Selling Sport Shoes
+### Project: Selling Sport Shoes
 
 Editor: VSCode
     Extensions: C#, VSCode Solution Explorer, Docker Explorer
@@ -12,7 +12,7 @@ Editor: VSCode
 
 # Notes
 
-##1.1 to 3.10 (Theory + Database Setup)
+## 1.1 to 3.10 (Theory + Database Setup)
 
 Security: taken care by centralized token server in form of asp.net core mvc
 
@@ -52,7 +52,7 @@ Main Elements of MicroSs
 
 Microsoft packages exist as reference, linked up on run time
 
-##3.11 DbContext
+## 3.11 DbContext
 
 Access to model collection - exposes functionalities 
 
@@ -65,7 +65,7 @@ DbContext Properties
 
 Tracked in Context, Database setup
 
-##3.12 Dependency Injection and Docker
+## 3.12 Dependency Injection and Docker
 
 Dependency Injection with ASP.NET Core
 - A mechanism to support loose coupling between objects 
@@ -81,13 +81,13 @@ Lifetime options
 Docker
 1. Download Docker Community Version -> Install 
 2. Login if necessary 
-3. Run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=ProductApi(!)' -e 'MSSQL_PID=Express' -p 1445:1433 --name=catalogdb microsoft/mssql-server-linux:latest
+3. Run: `docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=ProductApi(!)' -e 'MSSQL_PID=Express' -p 1445:1433 --name=catalogdb microsoft/mssql-server-linux:latest`
     1. Password has to be more that 8 character and at least 1 special character
     2. Lines “Starting up database “tempdb”” indicates a successful run
-4. Run: docker ps in another widow to see newly created container 
+4. Run: `docker ps in another widow to see newly created container`
 
 Microsoft SQL Management Studio (Windows Only - can use replacements)
-- https://stackoverflow.com/questions/3452/sql-client-for-mac-os-x-that-works-with-ms-sql-server
+- [StackOverflow](https://stackoverflow.com/questions/3452/sql-client-for-mac-os-x-that-works-with-ms-sql-server)
 - Create a new connection with localhost, port:1445, username: sa, pass: ProductApi(!)
 
 Run: docker exec -it catalogdb /opt/mssql-tools/bin/sqlcmd -s localhost -U sa
@@ -99,16 +99,39 @@ Run: docker exec -it catalogdb /opt/mssql-tools/bin/sqlcmd -s localhost -U sa
     - > GO
 
 Create a Trial Database
+```bash
 1> USE TrialDb
 2> CREATE TABLE Colleagues(Id INT, name NVARCHAR(50))
 3> INSERT INTO Colleagues VALUES(1,'Ben Hayat')
 4> INSERT INTO Colleagues VALUES(2,'Delight')
 5> GO
+```
 
+```bash
 Check
 1> SELECT * FROM Colleagues
 2> GO
+```
 
 Check in MSSQL Management 
 - Refresh or re-connect
 - Open the Colleague table to see the result
+
+## 3.13 Migration
+
+Add a new extension to VSCode called dotnet-core-command for package managing.
+
+Add Microsoft.EntityFrameworkCore.Tools and Microsoft.EntityFrameworkCore.Tools.DotNet to the ProductCatalogApi inside Solution Explorer window.
+
+Now ready for migration preparation. The packages will allow us create C# classes that will generate databases and map coresponding elements and references.
+
+Go into ProductCatalogApi folder and run:
+`dotnet ef migrations add InitialMigration -o Data/Migrations -c CatalogContext`
+- -o Migration folder
+- -c Context class
+
+In my terminal, a message saying the 'Price' will be truncked if the value is not within default decimal place range.
+
+Inside [Initial Migration file](../src/Services/ProductCatalogApi/Data/Migrations/20180724194837_InitialMigration.cs) there are two methods: Up() and Down(). The up method describes the change made to the databases while the down desribes the rollbacks happend during this migration. Inside the up function three different hilo sequences are created based on our specification inside the CatalogContext.
+
+
