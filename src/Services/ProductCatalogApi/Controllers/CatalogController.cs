@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using ProductCatalogApi.Data;
 using ProductCatalogApi.Domain;
+using ProductCatalogApi.ViewModels;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 
@@ -63,5 +64,89 @@ namespace ProductCatalogApi.Controllers
             }
             return NotFound();
         }
+        // GET api/Catalog/items[?pageSize=4&pageIndex=3]
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> Items([FromQuery] int pageSize = 6, [FromQuery] int pageIndex = 0)
+        {
+            var totalItems = await _catalogContext.CatalogItems
+                                .LongCountAsync(); // count of items async
+            var itemsOnPage = await _catalogContext.CatalogItems
+                                .OrderBy(c => c.Name)
+                                .Skip(pageIndex * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync();
+            
+            itemsOnPage = ChangeUrlPlaceHolder(itemsOnPage);
+
+            // Cover into a page list
+            var model = new PaginatedItemsViewModel<CatalogItem>(pageIndex,pageSize,(int)totalItems,itemsOnPage);
+            return Ok(model);
+        }
+        // GET api/Catalog/items/withname/star5[?pageSize=4&pageIndex=3]
+        [HttpGet]
+        // Change route to distinguish two methods
+        [Route("[action]/withname/{name:minlength(1)}")]
+        public async Task<IActionResult> Items(string name, [FromQuery] int pageSize = 6, [FromQuery] int pageIndex = 0)
+        {
+            var totalItems = await _catalogContext.CatalogItems
+                                .Where(c => c.Name.StartsWith(name))
+                                .LongCountAsync(); // count of items async
+            var itemsOnPage = await _catalogContext.CatalogItems
+                                .Where(c => c.Name.StartsWith(name))
+                                .OrderBy(c => c.Name)
+                                .Skip(pageIndex * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync();
+            
+            itemsOnPage = ChangeUrlPlaceHolder(itemsOnPage);
+
+            // Cover into a page list
+            var model = new PaginatedItemsViewModel<CatalogItem>(pageIndex,pageSize,(int)totalItems,itemsOnPage);
+            return Ok(model);
+        }
+        // Get api/Catalog/items/type/1/brand/null[?pageSize=4&pageIndex=3]
+        [HttpGet]
+        // Change route to cover both type and brand ids
+        [Route("[action]/type/{catalogTypeId}/brand/{catalogBrandId}")]
+        // Catalog Type and Brand Ids are optional/null value symbolized with "?"
+        public async Task<IActionResult> Items(int ? catalogTypeId, int ? catalogBrandId, [FromQuery] int pageSize = 6, [FromQuery] int pageIndex = 0)
+        {
+            // Create a queryable catalog item
+            var root = (IQueryable<CatalogItem>)_catalogContext.CatalogItems;
+            // Filtering based on catalog type id or brand id supplied in arguments
+            if(catalogTypeId.HasValue)
+            {
+                root = root.Where(c => c.CatalogTypeId == catalogTypeId);
+            }  
+            if(catalogBrandId.HasValue)
+            {
+                root = root.Where(c => c.CatalogBrandId == catalogBrandId);
+            } 
+
+            var totalItems = await _catalogContext.CatalogItems
+                                .LongCountAsync(); // count of items async
+            var itemsOnPage = await _catalogContext.CatalogItems
+                                .OrderBy(c => c.Name)
+                                .Skip(pageIndex * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync();
+            
+            itemsOnPage = ChangeUrlPlaceHolder(itemsOnPage);
+
+            // Cover into a page list
+            var model = new PaginatedItemsViewModel<CatalogItem>(pageIndex,pageSize,(int)totalItems,itemsOnPage);
+            return Ok(model);
+        }
+
+        private List<CatalogItem> ChangeUrlPlaceHolder(List<CatalogItem> items)
+        {
+            items.ForEach(x =>
+                x.PictureUrl = x.PictureUrl.Replace("http://externalcatalogbaseurltobereplaced",_settings.Value.ExternalCatalogBaseUrl)
+            );
+            return items;
+        }
+
+
     }
 }

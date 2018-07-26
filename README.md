@@ -209,3 +209,7 @@ Now can create 2 action methods for getting catalog types and brands. We should 
 
 We want create a GetItemById method inside the CatalogController class.
 We also want to create a PaginatedItemViewModel class with page size, page index, count and data available for external get access.
+
+## 3.19 CatalogController Part 3
+
+We create 3 more methods all called Items but with different signatures: one only requesting for page size and page index, one specifying item name, one specifying brand and/or type id. I the last one we create a variable to convert catalog items into a queryable list and filtered accordingly.
