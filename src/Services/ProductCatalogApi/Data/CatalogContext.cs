@@ -15,6 +15,7 @@ namespace ProductCatalogApi.Data
         // Without changing data access
         public CatalogContext(DbContextOptions options):base(options) 
         {   
+            this.Database.Migrate();
         }
         // Entity configuration using FluentAPI
         // Handler method from DbContext

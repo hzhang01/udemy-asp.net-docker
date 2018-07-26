@@ -220,3 +220,14 @@ We are going to create POST, PUT and DELETE type methods.
 We first create a POST request of creating a new item based on the JSON information in the body of the request. We save the new item asynchronously to the context and reuse our GetItemById to return the item. 
 Similarly, we create a POST method to update an item. But if the item doesn't exists, we return a NotFound object with customzed message. Here we reuse our GetItemById method to return the udpated item.
 Finally, we create a DELETE method similar to the POST method. We still return a NotFound for non-existing method and save asynchronously to the context. On success we return a NoContent object.
+
+## 3.20 - 3.21 Implementing Swagger UI API
+
+We have added Swashbuckle.AspNetCore to the project as well as some configuration code in Startup.cs.
+You can remove your catalogdb docker container and recreate it by running:
+`docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=ProductApi(!)' -e 'MSSQL_PID=Express' -p 1445:1433 --name=catalogdb microsoft/mssql-server-linux:latest`
+
+To automatically migrate the context, you could add `context.Database.Migrate()` into your CalalogSeed.cs file constructor or if you are using EF Core 2.1 with IWebHostBuilder, you can add `this.Database.Migrate()` just inside the empty CatalogContext constructor.
+
+If everything is done correctly, you can use the SwaggerUI to query data from the database.
+
