@@ -173,5 +173,12 @@ https://stackoverflow.com/questions/46222692/asp-net-core-2-seed-database instea
 For EFC 2.1 and IWebHostBuilder, you should create a new migration `dotnet ef migrations add TestMigration -o Data/Migrations -c CatalogContext` then run `dotnet ef database update` to see the change in your database visualization app.
 Like myself you might encounter issue with id missing from you seed data. I had to manually add those ids to the data but there must be a better way.
 
+## 3.15 PicController
 
+Create two controllers: CatalogController and PicController. Controllers will give us the option to modify through API endpoints.
 
+First, we will create the [PicController](./src/Services/Controller/PicController.cs). Copy over lecturer's pictures into wwwroot/Pics directory and remove everything that was there during project creation. You should also delete your previous Controller files, like the ValuesController, inside the Controller folder.
+
+Inside PicController, we create a private readonly variable using AspNetCore.Hosting called IHostingEnvironment. By initializing PicController class's _env to equal to this host environment, we can now access root web folder, json, docker files within our class.
+
+Inside the GetImage function, we first define the web root of the project using the IHostingEnvironment functionality. Then we define the full path of an image using string concatination and Path.Combine method. In order to return an actual image, we should first read all the bytes of the image file into a buffer and return the file by specifying he image type.
