@@ -204,3 +204,8 @@ Now inside our CatalogController class we can create a private ready-only variab
 
 We also need to turn off CatalogContext tracking to increase speed of processing.
 Now can create 2 action methods for getting catalog types and brands. We should also set action type of `[HttpGet]` and route to `[Route("[action]")]`. The action is a replacement token, it will be replaced by the request method. 
+
+## 3.18 CatalogController Part 2
+
+We want create a GetItemById method inside the CatalogController class.
+We also want to create a PaginatedItemViewModel class with page size, page index, count and data available for external get access.
