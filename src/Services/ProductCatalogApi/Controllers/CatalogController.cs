@@ -47,6 +47,7 @@ namespace ProductCatalogApi.Controllers
             return Ok(items);
         }
 
+        // Action method to get an item by its id
         [HttpGet]
         [Route("items/{id:int}")]
         public async Task<IActionResult> GetItemById(int id)
@@ -64,6 +65,7 @@ namespace ProductCatalogApi.Controllers
             }
             return NotFound();
         }
+
         // GET api/Catalog/items[?pageSize=4&pageIndex=3]
         [HttpGet]
         [Route("[action]")]
@@ -83,6 +85,7 @@ namespace ProductCatalogApi.Controllers
             var model = new PaginatedItemsViewModel<CatalogItem>(pageIndex,pageSize,(int)totalItems,itemsOnPage);
             return Ok(model);
         }
+
         // GET api/Catalog/items/withname/star5[?pageSize=4&pageIndex=3]
         [HttpGet]
         // Change route to distinguish two methods
@@ -105,7 +108,8 @@ namespace ProductCatalogApi.Controllers
             var model = new PaginatedItemsViewModel<CatalogItem>(pageIndex,pageSize,(int)totalItems,itemsOnPage);
             return Ok(model);
         }
-        // Get api/Catalog/items/type/1/brand/null[?pageSize=4&pageIndex=3]
+
+        // GET api/Catalog/items/type/1/brand/null[?pageSize=4&pageIndex=3]
         [HttpGet]
         // Change route to cover both type and brand ids
         [Route("[action]/type/{catalogTypeId}/brand/{catalogBrandId}")]
@@ -137,6 +141,61 @@ namespace ProductCatalogApi.Controllers
             // Cover into a page list
             var model = new PaginatedItemsViewModel<CatalogItem>(pageIndex,pageSize,(int)totalItems,itemsOnPage);
             return Ok(model);
+        }
+
+        // POST method of creating a CatalogItem using the body of the request
+        [HttpPost]
+        [Route("items")]
+        public async Task<IActionResult> CreateProductAsync([FromBody] CatalogItem product)
+        {
+            var item = new CatalogItem
+            {
+                CatalogBrandId = product.CatalogBrandId,
+                CatalogTypeId = product.CatalogTypeId,
+                Description = product.Description,
+                Name = product.Name,
+                PictureFileName = product.PictureFileName,
+                Price = product.Price
+            };
+            _catalogContext.CatalogItems.Add(item);
+            await _catalogContext.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetItemById),new {id = item.Id});
+        }
+
+        // PUT method to update a record based on item id
+        [HttpPut]
+        [Route("items")]
+        public async Task<IActionResult> UpdateProduct([FromBody] CatalogItem productToUpdate)
+        {
+            // Check if the item exists
+            var catalogItem  = await _catalogContext.CatalogItems
+                                    .SingleOrDefaultAsync(i => i.Id == productToUpdate.Id);
+            // Null case
+            if(catalogItem == null)
+            {
+                return NotFound(new { Message = $"Item with id {productToUpdate.Id} not found"});
+            }
+            // If exists
+            catalogItem = productToUpdate;
+            // Update the object in the list
+            _catalogContext.CatalogItems.Update(catalogItem);
+            await _catalogContext.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetItemById),new {id = productToUpdate.Id});
+        }
+
+        // DELETE a CatalogItem based on its id
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _catalogContext.CatalogItems.SingleOrDefaultAsync(p => p.Id == id);
+            if(product == null)
+            {
+                return NotFound();
+            }
+            _catalogContext.CatalogItems.Remove(product);
+            await _catalogContext.SaveChangesAsync();
+            return NoContent();
         }
 
         private List<CatalogItem> ChangeUrlPlaceHolder(List<CatalogItem> items)

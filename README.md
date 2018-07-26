@@ -213,3 +213,10 @@ We also want to create a PaginatedItemViewModel class with page size, page index
 ## 3.19 CatalogController Part 3
 
 We create 3 more methods all called Items but with different signatures: one only requesting for page size and page index, one specifying item name, one specifying brand and/or type id. I the last one we create a variable to convert catalog items into a queryable list and filtered accordingly.
+
+## 3.20 CatalogController Part 4
+
+We are going to create POST, PUT and DELETE type methods. 
+We first create a POST request of creating a new item based on the JSON information in the body of the request. We save the new item asynchronously to the context and reuse our GetItemById to return the item. 
+Similarly, we create a POST method to update an item. But if the item doesn't exists, we return a NotFound object with customzed message. Here we reuse our GetItemById method to return the udpated item.
+Finally, we create a DELETE method similar to the POST method. We still return a NotFound for non-existing method and save asynchronously to the context. On success we return a NoContent object.
