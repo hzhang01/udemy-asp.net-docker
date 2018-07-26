@@ -221,7 +221,7 @@ We first create a POST request of creating a new item based on the JSON informat
 Similarly, we create a POST method to update an item. But if the item doesn't exists, we return a NotFound object with customzed message. Here we reuse our GetItemById method to return the udpated item.
 Finally, we create a DELETE method similar to the POST method. We still return a NotFound for non-existing method and save asynchronously to the context. On success we return a NoContent object.
 
-## 3.20 - 3.21 Implementing Swagger UI API
+## 3.21 - 3.22 Implementing Swagger UI API
 
 We have added Swashbuckle.AspNetCore to the project as well as some configuration code in Startup.cs.
 You can remove your catalogdb docker container and recreate it by running:
@@ -230,4 +230,16 @@ You can remove your catalogdb docker container and recreate it by running:
 To automatically migrate the context, you could add `context.Database.Migrate()` into your CalalogSeed.cs file constructor or if you are using EF Core 2.1 with IWebHostBuilder, you can add `this.Database.Migrate()` just inside the empty CatalogContext constructor.
 
 If everything is done correctly, you can use the SwaggerUI to query data from the database.
+
+## 3.23 Dockerfile and Image Creation Part 1
+
+Create a Dokerfile (no extension) in the root of the project. Depending on your aspnetcore version you are using you should download the following images using `docker pull <image-name>`:
+- 2.0 - aspnetcore:2.0.0 and aspnetcore-build:2.0.0
+- 2.1 - dotnet:2.1 or latest (as of July 26 2018)
+
+In [Dockerfile](./src/Services/ProductCatalogApi/Docker) we write all the code to publish our image.
+
+Then run `docker build -t shoes/catalog .` in ProductCatalogApi.
+
+On successful build, you should get a new image called shoes/catalog:latest in your docker images list.
 
