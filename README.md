@@ -189,3 +189,18 @@ With 3.15 method we can't load the image onto the website so we had to add more 
 
 If you don't have Postman, the API testing tool, please download it.
 After you open a new tab in Postman, write `http://localhost:5001/api/Pic/1` if your localhost port is 5001, if not just change it to your port number. If Postman return a handshake problem, change the `http` to `https`. 
+
+## 3.17 CatalogController
+
+Create a file called [CatalogController](./src/Services/Controller/CatalogController.cs) inside the Controller folder and configure the route to `api/Catalog`. We need an instance of the CatalogContext in this class so we create a private read-only variable. If your `CatalogContext` keyword has an reference issues you could add `using ProductCatalogApi.Data` in your package import section.
+
+We also need our ProductCatalogApi URL in this class so we need update the url inside appsettings.json. Inside the appsettings.json add `"ExternalCatalogBaseUrl": "http://localhost:5000"`. 
+Furthermore, we sould also need to make some changes inside the launchSettings.json. Inside launch Setting change the 'applicationUrl' user 'iisSetting' to `"http://localhost:5000"`. If you have a key/value pair under 'profiles' called 'launchUrl' chang the value to `api/Catalog/items`, otherwise just add this key/pair value. Change the 'launchUrl' for 'ProductCatalogApi' object to `api/Catalog/items` as well. 
+Your final settings should look something like this: [appsettings.json](./src/Services/ProductCatalogApi/appsettings.json) and [launchSettings.json](./src/Services/ProductCatalogApi/Properties/launchSettings.json).
+
+Now we want to use those urls in our CatalogController class. The recommended way of doing this is to convert the settings inside appsettings.json into strongly-typed variables inside a class we would call CatalogSettings.cs in the root of the project. In order to make this work, we should also configure our newly created class inside Startup.cs.
+
+Now inside our CatalogController class we can create a private ready-only variable of CatalogSettings. Any properties you have defined inside the CatalogSettings class you can now use them in this class.
+
+We also need to turn off CatalogContext tracking to increase speed of processing.
+Now can create 2 action methods for getting catalog types and brands. We should also set action type of `[HttpGet]` and route to `[Route("[action]")]`. The action is a replacement token, it will be replaced by the request method. 

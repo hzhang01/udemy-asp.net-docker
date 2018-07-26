@@ -3,7 +3,7 @@
     "windowsAuthentication": false, 
     "anonymousAuthentication": true, 
     "iisExpress": {
-      "applicationUrl": "http://localhost:7367",
+      "applicationUrl": "http://localhost:5000",
       "sslPort": 44391
     }
   },
@@ -11,6 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "api/Catalog/items",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -18,8 +19,7 @@
     "ProductCatalogApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl":"https://localhost:5001",
-      "applicationUrl": ";http://localhost:5000",
+      "launchUrl":"api/Catalog/items",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

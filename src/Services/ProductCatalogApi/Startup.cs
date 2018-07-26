@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using ProductCatalogApi.Domain;
 using ProductCatalogApi.Data;
-using Microsoft.Extensions.Logging;
 
 namespace ProductCatalogApi
 {
@@ -28,6 +27,9 @@ namespace ProductCatalogApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Linked CatalogSettings to configuration, applying it to the whole project
+            services.Configure<CatalogSettings>(Configuration);
+            
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
