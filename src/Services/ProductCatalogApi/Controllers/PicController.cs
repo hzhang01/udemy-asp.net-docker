@@ -18,6 +18,8 @@ namespace ProductCatalogApi.Controllers
         {
             _env = env;
         }
+        [HttpGet]
+        [Route("{id}")]
         public IActionResult GetImage(int id)
         {
             // IHostEnvironment Object is available in our project
@@ -26,7 +28,7 @@ namespace ProductCatalogApi.Controllers
             // path to the root folder from anywhere
             var webRoot = _env.WebRootPath;
             // Find the full path of the image
-            var path = Path.Combine(webRoot + "Pics/","shoes-" + id + ".png");
+            var path = Path.Combine(webRoot + "/Pics/","shoes-" + id + ".png");
             // Convert to an image and return it
             // Create an image/file buffer
             var buffer = System.IO.File.ReadAllBytes(path);

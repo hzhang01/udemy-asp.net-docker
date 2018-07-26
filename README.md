@@ -182,3 +182,10 @@ First, we will create the [PicController](./src/Services/Controller/PicControlle
 Inside PicController, we create a private readonly variable using AspNetCore.Hosting called IHostingEnvironment. By initializing PicController class's _env to equal to this host environment, we can now access root web folder, json, docker files within our class.
 
 Inside the GetImage function, we first define the web root of the project using the IHostingEnvironment functionality. Then we define the full path of an image using string concatination and Path.Combine method. In order to return an actual image, we should first read all the bytes of the image file into a buffer and return the file by specifying he image type.
+
+## 3.16 Ammendment to 3.15
+
+With 3.15 method we can't load the image onto the website so we had to add more code into the PicController.cs file.
+
+If you don't have Postman, the API testing tool, please download it.
+After you open a new tab in Postman, write `http://localhost:5001/api/Pic/1` if your localhost port is 5001, if not just change it to your port number. If Postman return a handshake problem, change the `http` to `https`. 
